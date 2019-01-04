@@ -3,6 +3,9 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    private static readonly string HIGHSCORE_TEXT = "HighScore";
+    private static readonly int INITIAL_SCORE = 0;
+    private static readonly bool GAMEOVER_STATE = true;
 
     public delegate void GameDelegate();
     public static event GameDelegate OnGameStarted;
@@ -23,10 +26,22 @@ public class GameManager : MonoBehaviour
         GameOver
     }
 
-    int score = 0;
-    bool gameOver = true;
+    int score = INITIAL_SCORE;
+    bool gameOver = GAMEOVER_STATE;
 
     public bool GameOver { get { return gameOver; } }
+
+    public void ConfirmGameOver()
+    {
+        SetPageState(PageState.Start);
+        scoreText.text = INITIAL_SCORE.ToString();
+        OnGameOverConfirmed();
+    }
+
+    public void StartGame()
+    {
+        SetPageState(PageState.Countdown);
+    }
 
     void Awake()
     {
@@ -59,8 +74,8 @@ public class GameManager : MonoBehaviour
     {
         SetPageState(PageState.None);
         OnGameStarted();
-        score = 0;
-        gameOver = false;
+        score = INITIAL_SCORE;
+        gameOver = !GAMEOVER_STATE;
     }
 
     void OnPlayerScored()
@@ -71,11 +86,11 @@ public class GameManager : MonoBehaviour
 
     void OnPlayerDied()
     {
-        gameOver = true;
-        int savedScore = PlayerPrefs.GetInt("HighScore");
+        gameOver = GAMEOVER_STATE;
+        int savedScore = PlayerPrefs.GetInt(HIGHSCORE_TEXT);
         if (score > savedScore)
         {
-            PlayerPrefs.SetInt("HighScore", score);
+            PlayerPrefs.SetInt(HIGHSCORE_TEXT, score);
         }
         SetPageState(PageState.GameOver);
     }
@@ -106,17 +121,4 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
-
-    public void ConfirmGameOver()
-    {
-        SetPageState(PageState.Start);
-        scoreText.text = "0";
-        OnGameOverConfirmed();
-    }
-
-    public void StartGame()
-    {
-        SetPageState(PageState.Countdown);
-    }
-
 }

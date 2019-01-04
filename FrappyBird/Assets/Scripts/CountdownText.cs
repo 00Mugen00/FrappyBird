@@ -5,6 +5,9 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Text))]
 public class CountdownText : MonoBehaviour {
 
+    private static readonly string COUNTDOWN_TEXT = "Countdown";
+    private static readonly int COUNTDOWN = 3;
+
     public delegate void CountdownFinished();
     public static event CountdownFinished OnCountdownFinished;
 
@@ -13,13 +16,13 @@ public class CountdownText : MonoBehaviour {
     void OnEnable()
     {
         countdown = GetComponent<Text>();
-        countdown.text = "3";
-        StartCoroutine("Countdown");
+        countdown.text = COUNTDOWN.ToString();
+        StartCoroutine(COUNTDOWN_TEXT);
     }
 
     IEnumerator Countdown()
     {
-        int count = 3;
+        int count = COUNTDOWN;
         for(int i=0; i<count; i++)
         {
             countdown.text = (count - i).ToString();

@@ -6,11 +6,13 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Text))]
 public class HighscoreText : MonoBehaviour {
 
+    private static readonly string HIGHSCORE_TEXT = "HighScore";
+
     Text highscore;
 
     void OnEnable()
     {
         highscore = GetComponent<Text>();
-        highscore.text = "High Score: "+PlayerPrefs.GetInt("HighScore").ToString();
+        highscore.text = HIGHSCORE_TEXT + ": " +PlayerPrefs.GetInt(HIGHSCORE_TEXT).ToString();
     }
 }

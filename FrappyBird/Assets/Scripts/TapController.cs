@@ -5,6 +5,11 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class TapController: MonoBehaviour {
 
+    private static readonly string SCOREZONE_TAG = "ScoreZone";
+    private static readonly string DEADZONE_TAG = "DeadZone";
+    private static readonly Quaternion DOWN_ROTATION = Quaternion.Euler(0, 0, -60);
+    private static readonly Quaternion FORWARD_ROTATION = Quaternion.Euler(0, 0, 25);
+
     public delegate void PlayerDelegate();
     public static event PlayerDelegate OnPlayerDied;
     public static event PlayerDelegate OnPlayerScored;
@@ -24,12 +29,10 @@ public class TapController: MonoBehaviour {
 
     GameManager game;
 
-	// Use this for initialization
 	void Start () {
-        //Get the component
         rigidbody = GetComponent<Rigidbody2D>();
-        downRotation = Quaternion.Euler(0, 0, -60);
-        forwardRotation = Quaternion.Euler(0, 0, 25);
+        downRotation = DOWN_ROTATION;
+        forwardRotation = FORWARD_ROTATION;
         game = GameManager.Instance;
         rigidbody.simulated = false;
     }
@@ -58,14 +61,11 @@ public class TapController: MonoBehaviour {
         transform.rotation = Quaternion.identity;
     }
 
-    // Update is called once per frame
     void Update () {
         if (game.GameOver) return;
-        //If "tap"
         if (Input.GetMouseButtonDown(0))
         {
             tapAudio.Play();
-            // Bird should fly
             transform.rotation = forwardRotation;
             rigidbody.velocity = Vector3.zero;
             rigidbody.AddForce(Vector3.up * tapForce, ForceMode2D.Force);
@@ -75,20 +75,20 @@ public class TapController: MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.tag == "ScoreZone")
+        if(collision.gameObject.tag == SCOREZONE_TAG)
         {
-            // register a score event
-            OnPlayerScored(); //event sent to GameManager
-            // play a sound
+            //register a score event
+            //event sent to GameManager
+            OnPlayerScored();
             scoreAudio.Play();
         }
 
-        if(collision.gameObject.tag == "DeadZone")
+        if(collision.gameObject.tag == DEADZONE_TAG)
         {
             rigidbody.simulated = false;
-            // register a dead event
-            OnPlayerDied(); //event sent to GameManager
-            // play a sound
+            //register a dead event
+            //event sent to GameManager
+            OnPlayerDied();
             deadAudio.Play();
         }
     }
